@@ -1,0 +1,693 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+class jucarie
+{
+protected:
+
+	string denumire;
+	float volum;
+	string tip;
+
+public:
+
+	jucarie(string denumire=" ",float volum=0,string tip=" "): denumire(denumire),volum(volum),tip(tip) {}
+	jucarie(jucarie &j): jucarie(j.denumire,j.volum,j.tip){}
+
+	virtual istream& citire(istream& is)
+	{
+		cout << "Denumirea jucariei: ";
+		is >> denumire;
+		cout << endl;
+		cout << "Volumul cutiei in care este ambalata: ";
+		is >> volum;
+		cout << endl;
+		cout << "Tipul jucariei: ";
+		is >> tip;
+		cout << endl;
+
+		return is;
+	}
+
+	virtual ostream& afisare(ostream& os)
+	{
+		cout << "Denumirea jucariei: " << denumire << endl;
+		cout << "Volumul cutiei in care este ambalata: " << volum << endl;
+		cout << "Tipul jucariei: " << tip << endl;
+
+		return os;
+
+	}
+
+	friend istream& operator>>(istream& is, jucarie& j)
+	{
+		j.citire(is);
+		return is;
+	}
+
+	friend ostream& operator<<(ostream& os, jucarie& j)
+	{
+		j.afisare(os);
+		return os;
+	}
+
+
+
+};
+
+class jClasica : public jucarie
+{
+private:
+
+	string material;
+	string culoare;
+
+public:
+
+	jClasica(string denumire = " ", float volum = 0, string tip = " ", string material =" ", string culoare=" "): jucarie(denumire,volum,tip), material(material),culoare(culoare){}
+
+	istream& citire(istream& is)
+	{
+		jucarie::citire(is);
+		cout << "Materialul jucariei: ";
+		is >> material;
+		cout << endl;
+		cout << "Culoarea jucariei: ";
+		is >> culoare;
+		cout << endl;
+
+		return is;
+
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		jucarie::afisare(os);
+		os << "Materialul jucariei: " << material;
+		os << endl;
+		os << "Culoarea jucariei: " << culoare;
+		
+		return os;
+	}
+
+};
+
+class jEducativa : virtual public jucarie
+{
+protected:
+
+	string adezv;
+
+public:
+
+	jEducativa(string denumire = " ", float volum = 0, string tip = " ", string adezv=" "): jucarie(denumire,volum,tip), adezv(adezv){}
+
+
+	istream& citire(istream& is)
+	{
+		jucarie::citire(is);
+		cout << "Abilitatea pe care o dezvolta jucaria: ";
+		is >> adezv;
+
+		return is;
+
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		jucarie::afisare(os);
+		os << "Abilitatea pe care o dezvolta jucaria: " << adezv<<endl;
+
+		return os;
+	}
+
+};
+
+class jElectronica : virtual public jucarie
+{
+protected:
+
+	int nrbat;
+
+public:
+
+	jElectronica(string denumire = " ", float volum = 0, string tip = " ", int nrbat = 0) : jucarie(denumire,volum,tip), nrbat(nrbat){}
+
+	istream& citire(istream& is)
+	{
+		jucarie::citire(is);
+		cout << "Nr baterii: ";
+		is >> nrbat;
+
+		return is;
+
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		jucarie::afisare(os);
+		os << "Numarul de baterii: " << nrbat<<endl;
+	
+		return os;
+	}
+
+};
+
+class jModerna : public jEducativa, public jElectronica
+{
+private:
+
+	string brand;
+	string model;
+	
+public:
+
+	jModerna(string denumire = " ", float volum = 0, string tip = " ", string adezv="generala", int nrbat =1, string brand =" ",string model=" ") :
+		jucarie(denumire = " ",volum = 0, tip = " "), brand(brand), model(model) 
+	{
+		this->adezv = "generala";
+		this->nrbat= 1;
+	}
+
+	istream& citire(istream& is)
+	{
+		jucarie::citire(is);
+		cout << "Brandul jucariei: ";
+		is >> brand;
+		cout << "Modelul jucariei: ";
+		is >> model;
+
+		return is;
+
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		jucarie::afisare(os);
+
+		os << "Abilitatea dezvoltata: " << adezv << endl;
+
+		os << "Numarul de baterii: " << nrbat << endl;
+
+		os << "Brandul jucariei: " << brand;
+		os << endl;
+		os << "Modelul jucariei: " << model;
+
+		return os;
+	}
+
+};
+
+
+class copil
+{
+protected:
+
+	static int lastid;
+	int id;
+	string nume;
+	string prenume;
+	string adresa;
+	int varsta;
+	int nrfapteb;
+
+	vector<jucarie*> lista;
+
+	copil(string nume = "", string prenume = "", string adresa = "", int varsta = 0, int nrfapteb = 0, vector<jucarie*> lista = {}) :
+		id(lastid++), nume(nume), prenume(prenume), adresa(adresa), varsta(varsta), nrfapteb(nrfapteb), lista(lista) {}
+
+public:
+	
+	int getVarsta()
+	{
+		return varsta;
+	}
+
+	int getFapte()
+	{
+		return nrfapteb;
+	}
+
+	int getId()
+	{
+		return id;
+	}
+
+	vector<jucarie*> getLista()
+	{
+
+		return lista;
+	}
+
+	virtual istream& citire(istream& is)
+	{
+		cout << "Numele copilului este: ";
+		is >> nume;
+		cout << endl;
+
+		cout << "Prenumele copilului este: ";
+		is >> prenume;
+		cout << endl;
+
+		cout << "Adresa: ";
+		is >> adresa;
+		cout << endl;
+
+		cout << "Varsta: ";
+		is >> varsta;
+		cout << endl;
+
+		cout << "Numarul de fapte bune: ";
+		is >> nrfapteb;
+		cout << endl;
+
+		cout << "Lista de jucarii: "<<endl;
+
+
+		for (int i = 0; i < nrfapteb; i++)
+		{	
+				jucarie* j;
+				cout << "Ce tip de jucarie doresti sa adaugi in lista?// 1 pt Clasica 2 pt Educativa 3 pt Electronica 4 pt Moderna" << endl;
+				int input;
+				is >> input;
+				if (input == 1)
+				{
+
+					j = new jClasica;
+					is >> *j;
+					lista.push_back(j);
+
+				}
+				else if (input == 2)
+				{
+					j = new jEducativa;
+					is >> *j;
+					lista.push_back(j);
+				}
+				else if (input == 3)
+				{
+					j = new jElectronica;
+					is >> *j;
+					lista.push_back(j);
+				}
+				else if (input == 4)
+				{
+					j = new jModerna;
+					is >> *j;
+					lista.push_back(j);
+				}
+
+		}
+
+		return is;
+	}
+
+	virtual ostream& afisare(ostream& os)
+	{
+		os << "Id: " << id;
+		os << endl;
+		os << "Nume: " << nume;
+		os << endl;
+		os << "Prenume: " << prenume;
+		os << endl;
+		os << "Adresa: " << adresa;
+		os << endl;
+		os << "Varsta: " << varsta;
+		os << endl;
+
+		os << "Numarul de fapte bune: " << nrfapteb;
+		os << endl;
+
+		os << "Lista de jucarii: ";
+
+		for (auto i : lista)
+		{
+			os << *i;
+		}
+
+		os << endl;
+
+		return os;
+	}
+
+	friend istream& operator>>(istream& is, copil& c)
+	{
+		c.citire(is);
+		return is;
+	}
+
+	friend ostream& operator<<(ostream& os, copil& c)
+	{
+		c.afisare(os);
+		return os;
+	}
+
+};
+
+int copil :: lastid = 0;
+
+class cCuminte : public copil
+{
+private:
+
+	int nrDulciuri;
+
+public:
+
+	cCuminte(string nume = "", string prenume = "", string adresa = "", int varsta = 0, int nrfapteb = 0, vector<jucarie*> lista = {}, int nrDulciuri=0):
+		copil(nume,  prenume,  adresa,  varsta, nrfapteb ,lista ), nrDulciuri(nrDulciuri) {}
+
+
+	
+	istream& citire(istream& is)
+	{	
+
+		cout << "Numele copilului este: ";
+		is >> nume;
+		cout << endl;
+
+		cout << "Prenumele copilului este: ";
+		is >> prenume;
+		cout << endl;
+
+		cout << "Adresa: ";
+		is >> adresa;
+		cout << endl;
+
+		cout << "Varsta: ";
+		is >> varsta;
+		cout << endl;
+
+		int k = 0;
+
+		while (k == 0)
+		{
+		
+		cout << "Numarul de fapte bune: ";
+
+		is >> nrfapteb;
+		if (nrfapteb < 10)
+			{	
+				cout << "Copilul cuminte are cel putin 10 fapte bune. Reintroduceti.";
+				cout << endl;
+			}
+		else k = 1;
+			
+		}
+
+		cout << "Lista de jucarii: ";
+
+		for (int i = 0; i < nrfapteb; i++)
+		{
+			jucarie *j;
+			cout << "Ce tip de jucarie doresti sa adaugi in lista?// 1 pt Clasica 2 pt Educativa 3 pt Electronica 4 pt Moderna" << endl;
+			int input;
+			is >> input;
+			if (input == 1)
+			{
+				
+				j = new jClasica;
+				is >> *j;
+				lista.push_back(j);		
+
+			}
+			else if (input == 2)
+			{
+				j = new jEducativa;
+				is >> *j;
+				lista.push_back(j);
+			}
+			else if (input == 3)
+			{
+				j = new jElectronica;
+				is >> *j;
+				lista.push_back(j);
+			}
+			else if (input == 4)
+			{
+				j = new jModerna;
+				is >> *j;
+				lista.push_back(j);
+			}
+
+			cout << endl;
+			cout << "Numarul de dulciuri: ";
+			is >> nrDulciuri;
+
+
+		}
+
+		return is;
+
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		copil::afisare(os);
+		os << "Numarul de dulciuri: "<< nrDulciuri;
+
+		return os;
+
+	}
+
+};
+
+class cNeastamparat : public copil
+{
+private:
+
+	int nrCarbuni;
+
+
+public:
+
+	cNeastamparat(string nume = "", string prenume = "", string adresa = "", int varsta = 0, int nrfapteb = 0, vector<jucarie*> lista = {}, int nrCarbuni = 0) :
+		copil(nume, prenume, adresa, varsta, nrfapteb, lista), nrCarbuni(nrCarbuni) {}
+
+
+	istream& citire(istream& is)
+	{
+		copil::citire(is);
+		cout << "Numarul de carbuni: ";
+		is >> nrCarbuni;
+		cout << endl;
+		return is;
+	}
+
+	ostream& afisare(ostream& os)
+	{
+		copil::afisare(os);
+		os << "Numarul de carbuni este: " << nrCarbuni <<endl;
+		return os;
+
+	}
+
+};
+
+class Soft : public copil
+{
+
+private:
+
+	vector<copil*> listaCopii;
+
+public:
+
+	void adaugaLista()
+	{
+		int n, i, j;
+
+		
+
+		cout << "Cati copii sunt?" << endl;
+		cin >> n;
+		cout << endl;
+		for (i = 0; i < n; i++)
+		{
+			cout << "Copilul cu numarul " << i + 1 << " este cuminte sau neastamparat? //1 pentru cuminte 2 pentru neastamparat ";
+			cout << endl;
+			
+
+			cin >> j;
+			cout << endl;
+
+			if (j != 1 && j != 2)cout << "Reintroduceti." << endl;
+			else
+			{
+				if (j == 1)
+				{
+
+					copil* c1 = new cCuminte;
+					cin >> *c1;
+					listaCopii.push_back(c1);
+
+
+				}
+
+				else if (j == 2)
+				{
+					copil* c1 = new cNeastamparat;
+					cin >> *c1;
+					listaCopii.push_back(c1);
+
+				}
+			}
+
+		}
+
+
+	}
+
+	void afisazaLista()
+	{
+
+		for (auto i : listaCopii)
+		{
+			cout << *i;
+			cout << endl;
+		}
+		cout << endl;
+	}
+
+	void ordoneazaCopii()
+	{
+		for(int i=0;i<listaCopii.size()-1;i++)
+			for (int j = i + 1; j < listaCopii.size(); j++)
+			{	
+				if (listaCopii[i]->getVarsta()>listaCopii[j]->getVarsta())
+				{
+					auto aux = listaCopii[j];
+					listaCopii[j] = listaCopii[i];
+					listaCopii[i] = aux;
+				}
+
+			}	
+
+	}
+
+	void ordoneazaFapte()
+	{
+		for (int i = 0; i < listaCopii.size() - 1; i++)
+			for (int j = i + 1; j < listaCopii.size(); j++)
+			{
+				if (listaCopii[i]->getFapte()>listaCopii[j]->getFapte())
+				{
+					auto aux = listaCopii[j];
+					listaCopii[j] = listaCopii[i];
+					listaCopii[i] = aux;
+				}
+
+			}
+
+	}
+
+	void identif()
+	{
+
+		cout << "ID: ";
+		int id2;
+		cin >> id2;
+		cout << endl;
+		
+		for (auto i : listaCopii)
+		{
+			if (i->getId() == id2)
+			{
+				cout << "Acesta este copilul cu acel ID." << endl;
+				cout << endl;
+				cout << *i;
+				cout << endl << endl;
+				
+				break;
+
+			}
+			else cout << "Nu exista un copil cu acel ID in lista" << endl << endl;
+			
+
+		}
+	}
+	
+	void run()
+	{
+		while (true)
+		{	
+			cout << "Cerinta cu numarul: " << endl << endl;
+			cout << "1.Citeste n copii. // cu tot cu jucariile lor";
+			cout << endl;
+			cout << "2.Afisaza n copii. // cu tot cu jucariile lor";
+			cout << endl;
+
+			cout << "3.Ordoneaza crescator copiii dupa varsta." << endl;
+			cout << "4.Ordoneaza crescator copiii dupa numarul de fapte bune." << endl;
+			cout << "5.Identifica copilul cu un anume ID." << endl;
+			cout << "6.Inchide programul.";
+			cout << endl;
+			cout << endl;
+			int input;
+			cout << "1, 2, 3, 4, 5 sau 6: ";
+			cin >> input;
+			cout << endl;
+
+			if (input == 1)
+			{
+				adaugaLista();
+			}
+			else if (input == 2)
+			{	
+				if (listaCopii.size() == 0)cout << "Nu avem niciun copil in lista." << endl << endl;
+				
+				else
+				{
+					afisazaLista();
+				}
+			}
+			else if (input == 3)
+			{	
+				if (listaCopii.size() == 0)cout << "Nu avem niciun copil in lista." << endl << endl;
+				
+				else
+				{
+					ordoneazaCopii();
+					cout << "Lista a fost ordonata." << endl;
+					cout << endl;
+				}
+			}
+			else if (input == 4)
+			{
+				if (listaCopii.size() == 0)cout << "Nu avem niciun copil in lista." << endl << endl;
+
+				else
+				{
+					ordoneazaFapte();
+					cout << "Lista a fost ordonata." << endl;
+					cout << endl;
+				}
+			}
+			else if (input == 5)
+			{
+				if (listaCopii.size() == 0)cout << "Nu avem niciun copil in lista." << endl << endl;
+				else
+				{
+					identif();
+					cout << endl;
+
+				}
+
+			}
+			else if( input == 6 )break;
+
+		}
+
+	}
+
+};
+
+int main()
+{
+	Soft s;
+	s.run();
+
+	return 0;
+}
